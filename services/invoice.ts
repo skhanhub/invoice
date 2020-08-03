@@ -18,4 +18,11 @@ export default class invoice {
     private exchangeRates: { [key: string]: number; };
     private lineTotal: Array<ILineTotal>;
 
+    loadData() {}
+    generateQuery(){}
+    fetchExchangeRate(){}
+    calculateLineTotal(){}
+    calculateInvoiceTotal(){}
+    static printInvoiceTotal(){}
+    
 }
