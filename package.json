@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/shas38/invoice/issues"
   },
-  "homepage": "https://github.com/shas38/invoice#readme"
+  "homepage": "https://github.com/shas38/invoice#readme",
+  "dependencies": {
+    "typescript": "^3.9.7"
+  }
 }
