@@ -53,6 +53,7 @@ export default class Invoice {
             queryString+=`${lineItem.currency}${ index === this.lineItems.length-1 ? "" : ","}`
         });
         this.queryString = queryString;
+        return this.queryString;
     }
 
     async fetchExchangeRate(){
@@ -72,6 +73,7 @@ export default class Invoice {
                 amount: Math.round(((lineItem.amount/this.exchangeRates[lineItem.currency]) + Number.EPSILON) * 100) / 100
             }
         })
+        return this.lineTotal;
     }
 
     calculateInvoiceTotal(){
