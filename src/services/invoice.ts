@@ -67,7 +67,9 @@ export default class Invoice {
         return exchangeRates
     }
 
-    calculateLineTotal(){
+    calculateLineTotal(lineItems?: Array<ILineItem>, exchangeRates?: { [key: string]: number; }){
+        this.lineItems = lineItems || this.lineItems;
+        this.exchangeRates = exchangeRates || this.exchangeRates;
         this.lineTotal = this.lineItems.map(lineItem=>{
             return {
                 description: lineItem.description,
