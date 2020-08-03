@@ -72,12 +72,19 @@ export default class Invoice {
         })
     }
 
-    calculateInvoiceTotal(){}
+    calculateInvoiceTotal(){
+        const reducer = (accumulator: number, currentValue: ILineTotal) => accumulator + currentValue.amount;
+        this.invoiceTotal = Math.round((this.lineTotal.reduce(reducer, 0) + Number.EPSILON) * 100) / 100
+        return this.invoiceTotal
+    }
+    
     public async printInvoiceTotal(){
         this.loadData()
         this.generateQuery()
         await this.fetchExchangeRate()
         this.calculateLineTotal()
+        this.calculateInvoiceTotal()
+        console.log(this.invoiceTotal)
     }
 
 }
