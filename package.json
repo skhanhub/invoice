@@ -4,7 +4,8 @@
   "description": "A simple multi-currency invoicing CLI tool which uses the ExchangeRatesAPI.io historical data API.",
   "main": "app.ts",
   "scripts": {
-    "start": "tsc && node ./build/app.js"
+    "start": "tsc && node ./build/app.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,14 +21,14 @@
   },
   "homepage": "https://github.com/shas38/invoice#readme",
   "dependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/jest": "^26.0.8",
     "axios": "^0.19.2",
     "jest": "^26.2.2",
     "ts-jest": "^26.1.4",
     "typescript": "^3.9.7"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^26.0.8",
     "@types/node": "^14.0.27"
   }
 }
