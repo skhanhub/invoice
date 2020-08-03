@@ -37,11 +37,14 @@ export default class Invoice {
         try{
             this.baseCurrency = data.invoice.currency;
             this.lineItems = data.invoice.lines;
+            this.date = data.invoice.date;
         }catch(err){
             throw new Error("Invalid input file")
         }
     }
-    generateQuery(){}
+    generateQuery(){
+
+    }
     fetchExchangeRate(){}
     calculateLineTotal(){}
     calculateInvoiceTotal(){}
