@@ -86,7 +86,8 @@ export default class Invoice {
         return this.invoiceTotal
     }
 
-    public async printInvoiceTotal(){
+    public async printInvoiceTotal(invoiceTotal?: number){
+        this.invoiceTotal = invoiceTotal || this.invoiceTotal;
         this.generateQuery()
         await this.fetchExchangeRate()
         this.calculateLineTotal()
