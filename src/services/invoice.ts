@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import axios from 'axios';
 
 interface ILineItem {
     description: string;
@@ -52,12 +53,17 @@ export default class Invoice {
         this.queryString = queryString;
     }
 
-    fetchExchangeRate(){}
+    async fetchExchangeRate(){
+        const response = await axios.get(this.queryString)
+        this.exchangeRates = response.data.rates;
+    }
+
     calculateLineTotal(){}
     calculateInvoiceTotal(){}
     public printInvoiceTotal(){
         this.loadData()
         this.generateQuery()
+        this.fetchExchangeRate()
     }
 
 }
