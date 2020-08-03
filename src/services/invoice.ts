@@ -56,7 +56,7 @@ export default class Invoice {
         return this.queryString;
     }
 
-    async fetchExchangeRate(queryString: string){
+    async fetchExchangeRate(queryString?: string){
         this.queryString = queryString || this.queryString;
         const response = await axios.get(this.queryString)
         const exchangeRates: any = {};
