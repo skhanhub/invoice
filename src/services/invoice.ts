@@ -40,6 +40,7 @@ export default class Invoice {
             this.baseCurrency = data.invoice.currency;
             this.lineItems = data.invoice.lines;
             this.date = data.invoice.date;
+            return this.date;
         }catch(err){
             throw new Error("Invalid input file")
         }
