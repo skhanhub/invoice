@@ -42,14 +42,22 @@ export default class Invoice {
             throw new Error("Invalid input file")
         }
     }
-    generateQuery(){
 
+    generateQuery(){
+        const baseURL = 'https://api.exchangeratesapi.io';
+        let queryString = `${baseURL}/${this.date}?base=${this.baseCurrency}&symbols=`
+        this.lineItems.forEach((lineItem, index) => {
+            queryString+=`${lineItem.currency}${ index === this.lineItems.length-1 ? "" : ","}`
+        });
+        this.queryString = queryString;
     }
+
     fetchExchangeRate(){}
     calculateLineTotal(){}
     calculateInvoiceTotal(){}
     public printInvoiceTotal(){
         this.loadData()
+        this.generateQuery()
     }
 
 }
