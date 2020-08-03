@@ -60,16 +60,24 @@ export default class Invoice {
             exchangeRates[key] = Math.round((response.data.rates[key] + Number.EPSILON) * 10000) / 10000
         })
         this.exchangeRates = exchangeRates;
+        return exchangeRates
     }
 
     calculateLineTotal(){
-
+        this.lineTotal = this.lineItems.map(lineItem=>{
+            return {
+                description: lineItem.description,
+                amount: Math.round(((lineItem.amount/this.exchangeRates[lineItem.currency]) + Number.EPSILON) * 100) / 100
+            }
+        })
     }
+
     calculateInvoiceTotal(){}
-    public printInvoiceTotal(){
+    public async printInvoiceTotal(){
         this.loadData()
         this.generateQuery()
-        this.fetchExchangeRate()
+        await this.fetchExchangeRate()
+        this.calculateLineTotal()
     }
 
 }
