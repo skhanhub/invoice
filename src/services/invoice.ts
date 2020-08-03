@@ -55,10 +55,16 @@ export default class Invoice {
 
     async fetchExchangeRate(){
         const response = await axios.get(this.queryString)
-        this.exchangeRates = response.data.rates;
+        const exchangeRates: any = {};
+        Object.keys(response.data.rates).forEach((key: string, index)=>{
+            exchangeRates[key] = Math.round((response.data.rates[key] + Number.EPSILON) * 10000) / 10000
+        })
+        this.exchangeRates = exchangeRates;
     }
 
-    calculateLineTotal(){}
+    calculateLineTotal(){
+
+    }
     calculateInvoiceTotal(){}
     public printInvoiceTotal(){
         this.loadData()
