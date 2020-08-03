@@ -30,9 +30,10 @@ export default class Invoice {
         this.exchangeRates = {};
         this.lineTotal = [];
         this.invoiceTotal = null;
+        this.loadData()
     }
 
-    loadData() {
+    private loadData() {
         const rawData = fs.readFileSync(this.path);
         const data = JSON.parse(rawData.toString());
         try{
@@ -77,9 +78,8 @@ export default class Invoice {
         this.invoiceTotal = Math.round((this.lineTotal.reduce(reducer, 0) + Number.EPSILON) * 100) / 100
         return this.invoiceTotal
     }
-    
+
     public async printInvoiceTotal(){
-        this.loadData()
         this.generateQuery()
         await this.fetchExchangeRate()
         this.calculateLineTotal()
