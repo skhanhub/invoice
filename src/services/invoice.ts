@@ -79,7 +79,8 @@ export default class Invoice {
         return this.lineTotal;
     }
 
-    calculateInvoiceTotal(){
+    calculateInvoiceTotal(lineTotal?: Array<ILineTotal>){
+        this.lineTotal = lineTotal || this.lineTotal;
         const reducer = (accumulator: number, currentValue: ILineTotal) => accumulator + currentValue.amount;
         this.invoiceTotal = Math.round((this.lineTotal.reduce(reducer, 0) + Number.EPSILON) * 100) / 100
         return this.invoiceTotal
