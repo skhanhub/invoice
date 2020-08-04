@@ -17,6 +17,6 @@ RUN ./install.sh
 
 RUN ./build.sh
 
-RUN ./test.sh
+# RUN ./test.sh
 
 ENTRYPOINT ["./run.sh", "test-data/01-input.txt"]

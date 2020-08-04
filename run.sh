@@ -10,3 +10,4 @@
 # - the `$@` and `$1` variables will both contain `test-data/01-input.txt`
 # - you could then call a Python program from this script with `python main.py $@`
 # - then your main.py could print the filename like so: `import sys; print str(sys.argv[1])`
+node ./build/app.js $1

@@ -1,0 +1,1 @@
+{"invoice":{"currency":"BDT","date":"2020-08-03","lines":[{"description":"Intel Core i9","currency":"USD","amount":800},{"description":"ASUS ROG Strix","currency":"AUD","amount":400}]}}
