@@ -1,3 +1,4 @@
+// Import necessary libraries
 import * as fs from 'fs';
 import axios from 'axios';
 
@@ -21,6 +22,7 @@ export default class Invoice {
     private exchangeRates: { [key: string]: number; };
     private lineTotal: Array<ILineTotal>;
     private invoiceTotal: number | null;
+    // initialize properties and load data from the given path.
     constructor(path: string){
         this.path = path
         this.baseCurrency = "AUD";
@@ -32,7 +34,11 @@ export default class Invoice {
         this.invoiceTotal = null;
         this.loadData()
     }
-
+  /*
+    function for loading data from json file
+    The function doesnt take any arguments
+    The function returns the json data read from the file
+  */
     private loadData() {
         const rawData = fs.readFileSync(this.path);
         const data = JSON.parse(rawData.toString());
@@ -45,7 +51,11 @@ export default class Invoice {
             throw new Error("Invalid input file")
         }
     }
-
+  /*
+    function for generating query string from date, baseCurrency and lineItems properties
+    The function doesnt take any arguments
+    The function returns the a query string
+  */
     generateQuery(){
         const baseURL = 'https://api.exchangeratesapi.io';
         let queryString = `${baseURL}/${this.date}?base=${this.baseCurrency}&symbols=`
@@ -55,7 +65,15 @@ export default class Invoice {
         this.queryString = queryString;
         return this.queryString;
     }
-
+  /*
+    async function for making http get request that fetches exchange rates
+    The function either takes a query string or uses the queryString property as an input
+    The function returns an exchangerate object
+    {
+        "USD": 0.6541135574,
+        "AUD": 0.9421205098
+    }
+  */
     async fetchExchangeRate(queryString?: string){
         this.queryString = queryString || this.queryString;
         const response = await axios.get(this.queryString)
@@ -66,7 +84,12 @@ export default class Invoice {
         this.exchangeRates = exchangeRates;
         return exchangeRates
     }
-
+  /*
+    function for calculating line total
+    The function either takes an array of lineItems and  exchangeRates as arguments or uses the properties as an input
+    The function returns an array of object that follows ILineItem interface
+    [{"description":"Intel Core i9", "amount":1070.17},{"description":"ASUS ROG Strix", "amount":530.73}];
+  */
     calculateLineTotal(lineItems?: Array<ILineItem>, exchangeRates?: { [key: string]: number; }){
         this.lineItems = lineItems || this.lineItems;
         this.exchangeRates = exchangeRates || this.exchangeRates;
@@ -78,14 +101,22 @@ export default class Invoice {
         })
         return this.lineTotal;
     }
-
+  /*
+    function for calculating the invoice total
+    The function either takes an array of ILineTotal as arguments or uses the lineTotal property as an input
+    The function returns the invoice total
+  */
     calculateInvoiceTotal(lineTotal?: Array<ILineTotal>){
         this.lineTotal = lineTotal || this.lineTotal;
         const reducer = (accumulator: number, currentValue: ILineTotal) => accumulator + currentValue.amount;
         this.invoiceTotal = Math.round((this.lineTotal.reduce(reducer, 0) + Number.EPSILON) * 100) / 100
         return this.invoiceTotal
     }
-
+  /*
+    function for logging the invoice total
+    The function either takes invoiceTotal as arguments or uses the invoiceTotal property as an input
+    The function logs invoiceTotal on the console
+  */
     public async printInvoiceTotal(invoiceTotal?: number){
         this.invoiceTotal = invoiceTotal || this.invoiceTotal;
         this.generateQuery()
