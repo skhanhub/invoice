@@ -49,8 +49,14 @@ export default class Invoice {
     The function returns the json data read from the file
   */
   private loadData() {
-    const rawData = fs.readFileSync(this.path);
-    const data = JSON.parse(rawData.toString());
+    let data;
+    try {
+      const rawData = fs.readFileSync(this.path);
+      data = JSON.parse(rawData.toString());
+    } catch (err) {
+      throw new Error(err.message);
+    }
+
     try {
       this.baseCurrency = data.invoice.currency;
       this.lineItems = data.invoice.lines;
