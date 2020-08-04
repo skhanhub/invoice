@@ -12,6 +12,14 @@ interface ILineTotal {
     amount: number;
 }
 
+//function for rounding a number to a given specific decimal places
+function precise_round(num, dec){
+ 
+    var num_sign = num >= 0 ? 1 : -1;
+        
+    return +(Math.round((num*Math.pow(10,dec))+(num_sign*0.0001))/Math.pow(10,dec)).toFixed(dec);
+}
+
 // A class for calculating the total invoice amount for a given currency
 export default class Invoice {
     private path: string;
@@ -79,7 +87,7 @@ export default class Invoice {
         const response = await axios.get(this.queryString)
         const exchangeRates: any = {};
         Object.keys(response.data.rates).forEach((key: string, index)=>{
-            exchangeRates[key] = Math.round((response.data.rates[key] + Number.EPSILON) * 10000) / 10000
+            exchangeRates[key] = precise_round(response.data.rates[key] , 4) 
         })
         this.exchangeRates = exchangeRates;
         return exchangeRates
@@ -96,7 +104,7 @@ export default class Invoice {
         this.lineTotal = this.lineItems.map(lineItem=>{
             return {
                 description: lineItem.description,
-                amount: Math.round(((lineItem.amount/this.exchangeRates[lineItem.currency]) + Number.EPSILON) * 100) / 100
+                amount: precise_round(lineItem.amount/this.exchangeRates[lineItem.currency], 2)
             }
         })
         return this.lineTotal;
@@ -109,7 +117,7 @@ export default class Invoice {
     calculateInvoiceTotal(lineTotal?: Array<ILineTotal>){
         this.lineTotal = lineTotal || this.lineTotal;
         const reducer = (accumulator: number, currentValue: ILineTotal) => accumulator + currentValue.amount;
-        this.invoiceTotal = Math.round((this.lineTotal.reduce(reducer, 0) + Number.EPSILON) * 100) / 100
+        this.invoiceTotal = precise_round(this.lineTotal.reduce(reducer, 0), 2)
         return this.invoiceTotal
     }
   /*
