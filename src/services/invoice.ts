@@ -83,14 +83,20 @@ export default class Invoice {
     }
   */
     async fetchExchangeRate(queryString?: string){
-        this.queryString = queryString || this.queryString;
-        const response = await axios.get(this.queryString)
-        const exchangeRates: any = {};
-        Object.keys(response.data.rates).forEach((key: string, index)=>{
-            exchangeRates[key] = precise_round(response.data.rates[key] , 4) 
-        })
-        this.exchangeRates = exchangeRates;
-        return exchangeRates
+        try{
+            this.queryString = queryString || this.queryString;
+            const response = await axios.get(this.queryString)
+            const exchangeRates: any = {};
+            Object.keys(response.data.rates).forEach((key: string, index)=>{
+                exchangeRates[key] = precise_round(response.data.rates[key] , 4) 
+            })
+            this.exchangeRates = exchangeRates;
+            return exchangeRates
+        }
+        catch(err){
+            throw new Error(err.message)
+        }
+
     }
   /*
     function for calculating line total
@@ -126,12 +132,17 @@ export default class Invoice {
     The function logs invoiceTotal on the console
   */
     public async printInvoiceTotal(invoiceTotal?: number){
-        this.invoiceTotal = invoiceTotal || this.invoiceTotal;
-        this.generateQuery()
-        await this.fetchExchangeRate()
-        this.calculateLineTotal()
-        this.calculateInvoiceTotal()
-        console.log(this.invoiceTotal)
+        try{
+            this.invoiceTotal = invoiceTotal || this.invoiceTotal;
+            this.generateQuery()
+            await this.fetchExchangeRate()
+            this.calculateLineTotal()
+            this.calculateInvoiceTotal()
+            console.log(this.invoiceTotal)
+        }
+        catch(err){
+            throw new Error(err.message)
+        }
     }
 
 }
