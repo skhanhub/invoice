@@ -87,7 +87,7 @@ export default class Invoice {
       const response = await axios.get(this.queryString);
       const exchangeRates: any = {};
       Object.keys(response.data.rates).forEach((key: string, index) => {
-        exchangeRates[key] = precise_round(response.data.rates[key], 4);
+        exchangeRates[key] = precise_round(1 / response.data.rates[key], 4);
       });
       this.exchangeRates = exchangeRates;
       return exchangeRates;
@@ -107,7 +107,7 @@ export default class Invoice {
     this.lineTotal = this.lineItems.map(lineItem => {
       return {
         description: lineItem.description,
-        amount: precise_round(lineItem.amount / this.exchangeRates[lineItem.currency], 2)
+        amount: precise_round(lineItem.amount * this.exchangeRates[lineItem.currency], 2)
       };
     });
     return this.lineTotal;
