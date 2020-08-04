@@ -9,14 +9,3 @@ RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
 RUN apt-get install -y nodejs
 
-WORKDIR /app
-
-COPY . .
-
-RUN ./install.sh
-
-RUN ./build.sh
-
-# RUN ./test.sh
-
-ENTRYPOINT ["./run.sh", "test-data/01-input.txt"]
