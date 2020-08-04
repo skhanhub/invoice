@@ -2,3 +2,4 @@
 
 ## PLEASE EDIT ME
 ## Add the commands to build your solution (if required) here
+npm run build
