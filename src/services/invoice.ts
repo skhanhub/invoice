@@ -13,7 +13,7 @@ interface ILineTotal {
 }
 
 //function for rounding a number to a given specific decimal places
-function precise_round(num, dec) {
+function round(num, dec) {
   var num_sign = num >= 0 ? 1 : -1;
 
   return +(Math.round(num * Math.pow(10, dec) + num_sign * 0.0001) / Math.pow(10, dec)).toFixed(dec);
@@ -84,10 +84,11 @@ export default class Invoice {
   async fetchExchangeRate(queryString?: string) {
     try {
       this.queryString = queryString || this.queryString;
+      if (this.queryString === '') throw new Error('missing query string');
       const response = await axios.get(this.queryString);
       const exchangeRates: any = {};
       Object.keys(response.data.rates).forEach((key: string, index) => {
-        exchangeRates[key] = precise_round(1 / response.data.rates[key], 4);
+        exchangeRates[key] = round(1 / response.data.rates[key], 4);
       });
       this.exchangeRates = exchangeRates;
       return exchangeRates;
@@ -104,12 +105,17 @@ export default class Invoice {
   calculateLineTotal(lineItems?: Array<ILineItem>, exchangeRates?: { [key: string]: number }) {
     this.lineItems = lineItems || this.lineItems;
     this.exchangeRates = exchangeRates || this.exchangeRates;
+
+    if (this.lineItems.length === 0) throw new Error('no lineItems found');
+    if (Object.keys(this.lineItems).length === 0) throw new Error('empty exchangeRates object');
+
     this.lineTotal = this.lineItems.map(lineItem => {
       return {
         description: lineItem.description,
-        amount: precise_round(lineItem.amount * this.exchangeRates[lineItem.currency], 2)
+        amount: round(lineItem.amount * this.exchangeRates[lineItem.currency], 2)
       };
     });
+
     return this.lineTotal;
   }
   /*
@@ -119,8 +125,11 @@ export default class Invoice {
   */
   calculateInvoiceTotal(lineTotal?: Array<ILineTotal>) {
     this.lineTotal = lineTotal || this.lineTotal;
+
+    if (this.lineTotal.length === 0) throw new Error('no lineTotal found');
+
     const reducer = (accumulator: number, currentValue: ILineTotal) => accumulator + currentValue.amount;
-    this.invoiceTotal = precise_round(this.lineTotal.reduce(reducer, 0), 2);
+    this.invoiceTotal = round(this.lineTotal.reduce(reducer, 0), 2);
     return this.invoiceTotal;
   }
   /*
@@ -131,11 +140,16 @@ export default class Invoice {
   public async printInvoiceTotal(invoiceTotal?: number) {
     try {
       this.invoiceTotal = invoiceTotal || this.invoiceTotal;
-      this.generateQuery();
-      await this.fetchExchangeRate();
-      this.calculateLineTotal();
-      this.calculateInvoiceTotal();
-      console.log(this.invoiceTotal);
+
+      if (this.invoiceTotal) {
+        console.log(this.invoiceTotal);
+      } else {
+        this.generateQuery();
+        await this.fetchExchangeRate();
+        this.calculateLineTotal();
+        this.calculateInvoiceTotal();
+        console.log(this.invoiceTotal);
+      }
     } catch (err) {
       throw new Error(err.message);
     }
