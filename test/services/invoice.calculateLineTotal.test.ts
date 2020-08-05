@@ -2,7 +2,6 @@ import * as path from "path";
 
 import Invoice from "../../src/services/invoice";
 
-jest.mock("axios");
 const lineItems = [
   { description: "Intel Core i9", currency: "USD", amount: 700 },
   { description: "ASUS ROG Strix", currency: "AUD", amount: 500 },
