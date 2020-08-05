@@ -1,6 +1,6 @@
 // Import necessary libraries
-import * as fs from "fs";
-import axios from "axios";
+import * as fs from 'fs';
+import axios from 'axios';
 
 interface ILineItem {
   description: string;
@@ -13,14 +13,13 @@ interface ILineTotal {
 }
 
 //function for rounding a number to a given specific decimal places
-function round(num, dec) {
-  var num_sign = num >= 0 ? 1 : -1;
-
-  return +(
-    Math.round(num * Math.pow(10, dec) + num_sign * 0.0001) / Math.pow(10, dec)
-  ).toFixed(dec);
+function round(n, d = 2) {
+  var x = n * Math.pow(10, d);
+  var r = Math.round(x);
+  var br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
+  return br / Math.pow(10, d);
 }
-
+console.log(round(1.55499994));
 // A class for calculating the total invoice amount for a given currency
 export default class Invoice {
   private path: string;
@@ -34,10 +33,10 @@ export default class Invoice {
   // initialize properties and load data from the given path.
   constructor(path: string) {
     this.path = path;
-    this.baseCurrency = "AUD";
-    this.date = "2020/08/05";
+    this.baseCurrency = 'AUD';
+    this.date = '2020/08/05';
     this.lineItems = [];
-    this.queryString = "";
+    this.queryString = '';
     this.exchangeRates = {};
     this.lineTotal = [];
     this.invoiceTotal = null;
@@ -63,7 +62,7 @@ export default class Invoice {
       this.date = data.invoice.date;
       return this.date;
     } catch (err) {
-      throw new Error("Invalid input file");
+      throw new Error('Invalid input file');
     }
   }
   /*
@@ -72,12 +71,10 @@ export default class Invoice {
     The function returns the a query string
   */
   generateQuery() {
-    const baseURL = "https://api.exchangeratesapi.io";
+    const baseURL = 'https://api.exchangeratesapi.io';
     let queryString = `${baseURL}/${this.date}?base=${this.baseCurrency}&symbols=`;
     this.lineItems.forEach((lineItem, index) => {
-      queryString += `${lineItem.currency}${
-        index === this.lineItems.length - 1 ? "" : ","
-      }`;
+      queryString += `${lineItem.currency}${index === this.lineItems.length - 1 ? '' : ','}`;
     });
     this.queryString = queryString;
     return this.queryString;
@@ -94,7 +91,7 @@ export default class Invoice {
   async fetchExchangeRate(queryString?: string) {
     try {
       this.queryString = queryString || this.queryString;
-      if (this.queryString === "") throw new Error("missing query string");
+      if (this.queryString === '') throw new Error('missing query string');
       const response = await axios.get(this.queryString);
       const exchangeRates: { [key: string]: number } = {};
       Object.keys(response.data.rates).forEach((key: string, index) => {
@@ -103,8 +100,7 @@ export default class Invoice {
       this.exchangeRates = exchangeRates;
       return exchangeRates;
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error)
-        throw new Error(err.response.data.error);
+      if (err.response && err.response.data && err.response.data.error) throw new Error(err.response.data.error);
       else throw new Error(err.message);
     }
   }
@@ -114,24 +110,17 @@ export default class Invoice {
     The function returns an array of object that follows ILineItem interface
     [{"description":"Intel Core i9", "amount":1070.17},{"description":"ASUS ROG Strix", "amount":530.73}];
   */
-  calculateLineTotal(
-    lineItems?: Array<ILineItem>,
-    exchangeRates?: { [key: string]: number }
-  ) {
+  calculateLineTotal(lineItems?: Array<ILineItem>, exchangeRates?: { [key: string]: number }) {
     this.lineItems = lineItems || this.lineItems;
     this.exchangeRates = exchangeRates || this.exchangeRates;
 
-    if (this.lineItems.length === 0) throw new Error("no lineItems found");
-    if (Object.keys(this.lineItems).length === 0)
-      throw new Error("empty exchangeRates object");
+    if (this.lineItems.length === 0) throw new Error('no lineItems found');
+    if (Object.keys(this.lineItems).length === 0) throw new Error('empty exchangeRates object');
 
-    this.lineTotal = this.lineItems.map((lineItem) => {
+    this.lineTotal = this.lineItems.map(lineItem => {
       return {
         description: lineItem.description,
-        amount: round(
-          lineItem.amount * this.exchangeRates[lineItem.currency],
-          2
-        ),
+        amount: round(lineItem.amount * this.exchangeRates[lineItem.currency], 2)
       };
     });
 
@@ -145,10 +134,9 @@ export default class Invoice {
   calculateInvoiceTotal(lineTotal?: Array<ILineTotal>) {
     this.lineTotal = lineTotal || this.lineTotal;
 
-    if (this.lineTotal.length === 0) throw new Error("no lineTotal found");
+    if (this.lineTotal.length === 0) throw new Error('no lineTotal found');
 
-    const reducer = (accumulator: number, currentValue: ILineTotal) =>
-      accumulator + currentValue.amount;
+    const reducer = (accumulator: number, currentValue: ILineTotal) => accumulator + currentValue.amount;
     this.invoiceTotal = round(this.lineTotal.reduce(reducer, 0), 2);
     return this.invoiceTotal;
   }
