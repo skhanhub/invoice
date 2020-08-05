@@ -19,7 +19,7 @@ function round(n, d = 2) {
   var br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
   return br / Math.pow(10, d);
 }
-console.log(round(1.55499994));
+
 // A class for calculating the total invoice amount for a given currency
 export default class Invoice {
   private path: string;
