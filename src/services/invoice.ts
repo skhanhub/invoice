@@ -1,6 +1,7 @@
 // Import necessary libraries
 import * as fs from 'fs';
 import axios from 'axios';
+import round from './helper';
 
 interface ILineItem {
   description: string;
@@ -10,14 +11,6 @@ interface ILineItem {
 interface ILineTotal {
   description: string;
   amount: number;
-}
-
-//function for rounding a number to a given specific decimal places
-function round(n, d = 2) {
-  var x = n * Math.pow(10, d);
-  var r = Math.round(x);
-  var br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
-  return br / Math.pow(10, d);
 }
 
 // A class for calculating the total invoice amount for a given currency
