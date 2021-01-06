@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/shas38/invoice#readme",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "jest": "^26.2.2",
     "ts-jest": "^26.1.4",
     "typescript": "^3.9.7"
